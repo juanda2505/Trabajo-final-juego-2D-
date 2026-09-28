@@ -1,4 +1,4 @@
 # Trabajo-final-juego-2D
 
-##Estudiante: Juan David Acevedo
-## Informatica II
+## Informatica II - 2026 2
+Estudiante: Juan David Acevedo
