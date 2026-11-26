@@ -6,10 +6,14 @@
 #include <QGraphicsView>
 #include <QTimer>
 #include <QKeyEvent>
+#include <QPixmap>
+#include <QString>
 #include <vector>
 
 #include "jugador.h"
 #include "proyectil.h"
+#include "enemigo.h"
+#include "enemigooscilante.h"
 #include "entidadgrafica.h"
 
 QT_BEGIN_NAMESPACE
@@ -18,44 +22,55 @@ QT_END_NAMESPACE
 
 /*
  * MAINWINDOW (la ventana principal)
- * Es el "director" del juego: crea la escena, lee el teclado
- * y, cada pocos milisegundos, actualiza todo lo que pasa en pantalla.
+ * Es el "director" del juego: crea la escena, lee el teclado,
+ * revisa las colisiones y, cada 16 ms, actualiza todo lo que pasa.
  */
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT   // necesario para que Qt pueda usar señales y slots (el timer)
+    Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);   // prepara todo al abrir el juego
-    ~MainWindow();                           // limpia la memoria al cerrar
+    MainWindow(QWidget *parent = nullptr);
+    ~MainWindow();
 
 protected:
-    // Qt llama a estas dos funciones solo cuando se presiona o se suelta una tecla
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
 
 private slots:
-    // Se ejecuta cada 16 ms (unas 60 veces por segundo): es el "latido" del juego
-    void actualizar();
+    void actualizar();   // se ejecuta cada 16 ms
 
 private:
-    void disparar();   // crea una bala recta saliendo de Goku
-
-    // Registra una bala nueva: crea su dibujo, la pone en la escena y en la lista
+    void disparar();                                          // bala de Goku
     void agregarProyectil(Proyectil *p, const QPixmap &sprite);
+    void agregarBalaEnemiga(Proyectil *p);                    // recibe la bala ya creada
+    void crearEnemigo(double x, double y);
+    void crearEnemigoOscilante(double x, double y);
+    void eliminar(EntidadGrafica *g);                         // quita dibujo y lógica
+    void terminar(const QString &motivo);                     // fin de la partida
 
     Ui::MainWindow *ui;
-    QGraphicsScene *scene;   // la escena: el "escenario" donde viven los objetos
-    QGraphicsView *view;     // la vista: la ventana que deja ver la escena
-    QTimer *timer;           // el reloj que llama a actualizar() una y otra vez
+    QGraphicsScene *scene;
+    QGraphicsView *view;
+    QTimer *timer;
 
-    Jugador *goku;                      // Goku (parte lógica)
-    EntidadGrafica *gokuGrafico;        // Goku (su dibujo)
-    std::vector<EntidadGrafica*> balas; // lista de todas las balas que hay en pantalla
-    QPixmap spriteBala;                 // la imagen que usan todas las balas
+    Jugador *goku;
+    EntidadGrafica *gokuGrafico;
 
-    bool izquierda = false;   // true mientras la flecha izquierda esté presionada
-    bool derecha = false;     // true mientras la flecha derecha esté presionada
+    std::vector<EntidadGrafica*> balas;             // balas de Goku
+    std::vector<EntidadGrafica*> balasEnemigas;     // balas de los enemigos
+    std::vector<EntidadGrafica*> enemigosGraficos;  // enemigos en pantalla
+
+    QPixmap spriteBala;
+    QPixmap spriteBalaEnemiga;
+    QPixmap framesEnemigo[2];      // cuadros de los enemigos normales
+    QPixmap framesOscilante[2];    // cuadros de los enemigos oscilantes (morados)
+
+    bool izquierda = false;
+    bool derecha = false;
+    bool juegoTerminado = false;
+    int puntos = 0;
+    int contadorSpawn = 0;
 };
 
 #endif // MAINWINDOW_H

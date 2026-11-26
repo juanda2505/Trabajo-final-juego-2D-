@@ -21,6 +21,12 @@ qt_add_executable(desafio3
     proyectil.cpp
     proyectilparabolico.h
     proyectilparabolico.cpp
+    enemigo.h
+    enemigo.cpp
+    proyectilrebote.cpp
+    proyectilrebote.h
+    enemigooscilante.cpp
+    enemigooscilante.h
 )
 
 target_link_libraries(desafio3
