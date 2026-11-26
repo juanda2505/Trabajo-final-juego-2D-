@@ -19,6 +19,8 @@ qt_add_executable(desafio3
     entidadgrafica.cpp
     proyectil.h
     proyectil.cpp
+    proyectilparabolico.h
+    proyectilparabolico.cpp
 )
 
 target_link_libraries(desafio3

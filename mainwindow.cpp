@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "proyectilparabolico.h"
 
 // CONSTRUCTOR: se ejecuta una sola vez, al abrir el juego.
 // Aquí se crea todo lo que el juego necesita para empezar.
@@ -73,7 +74,7 @@ void MainWindow::actualizar()
     for (auto it = balas.begin(); it != balas.end(); ) {
         // Obtiene la parte lógica de la bala actual
         Proyectil *p = static_cast<Proyectil*>((*it)->getLogica());
-        p->actualizar();        // la bala avanza
+        p->actualizar();        // la bala avanza (recta o con gravedad, según su tipo)
         (*it)->sincronizar();   // su dibujo avanza con ella
 
         if (p->fueraDePantalla()) {
@@ -91,14 +92,20 @@ void MainWindow::actualizar()
     // Aquí irán después: enemigos, colisiones, agente...
 }
 
-// DISPARAR: crea una bala nueva justo encima de Goku, en el centro
+// AGREGAR PROYECTIL: sirve para cualquier tipo de bala (recta o parabólica)
+void MainWindow::agregarProyectil(Proyectil *p, const QPixmap &sprite)
+{
+    EntidadGrafica *g = new EntidadGrafica(p, sprite, 3);   // su dibujo
+    scene->addItem(g);     // la pone en el escenario para que se vea
+    balas.push_back(g);    // la agrega a la lista para moverla después
+}
+
+// DISPARAR: crea una bala recta justo encima de Goku, en el centro
 void MainWindow::disparar()
 {
     double ancho = gokuGrafico->boundingRect().width() * gokuGrafico->scale();
-    Proyectil *p = new Proyectil(goku->getX() + ancho / 2 - 3, goku->getY() - 20);
-    EntidadGrafica *g = new EntidadGrafica(p, spriteBala, 3);
-    scene->addItem(g);     // la pone en el escenario para que se vea
-    balas.push_back(g);    // la agrega a la lista para poder moverla después
+    agregarProyectil(new Proyectil(goku->getX() + ancho / 2 - 3, goku->getY() - 20),
+                     spriteBala);
 }
 
 // TECLA PRESIONADA: Qt avisa cada vez que se aprieta una tecla
@@ -111,6 +118,10 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Left)  izquierda = true;   // empieza a ir a la izquierda
     if (event->key() == Qt::Key_Right) derecha = true;     // empieza a ir a la derecha
     if (event->key() == Qt::Key_Space) disparar();         // espacio = disparar
+
+    // PRUEBA TEMPORAL: la tecla C lanza un cañonazo parabólico (se quita después)
+    if (event->key() == Qt::Key_C)
+        agregarProyectil(new ProyectilParabolico(50, 300, 4, -9), spriteBala);
 }
 
 // TECLA SOLTADA: Qt avisa cuando se suelta una tecla

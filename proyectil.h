@@ -5,19 +5,24 @@
 
 /*
  * PROYECTIL
- * Es una bala (el disparo de Goku). También hereda de Entidad.
- * Se mueve sola en línea recta hacia arriba hasta salir de la pantalla.
+ * Es una bala. Sirve para los disparos de Goku (suben) y para los de los
+ * enemigos (bajan). Se mueve en línea recta según su velocidad.
+ *   vx : velocidad horizontal (positiva = derecha, negativa = izquierda)
+ *   vy : velocidad vertical   (positiva = baja,    negativa = sube)
  */
 class Proyectil : public Entidad {
-    double vy;   // velocidad vertical (negativa = sube, positiva = baja)
+protected:
+    // "protected" para que las clases que heredan (como la parabólica) las usen
+    double vx, vy;
 public:
-    // Crea la bala en (x, y). Si no se indica 'vy', sube a velocidad -8
-    Proyectil(double x, double y, double vy = -8);
+    // Crea la bala en (x, y). Por defecto sube recta a velocidad 8
+    Proyectil(double x, double y, double vx = 0, double vy = -8);
 
-    // Avanza la bala un paso según su velocidad
-    void actualizar();
+    // Avanza la bala un paso. Es "virtual": las clases hijas pueden
+    // cambiar la forma de moverse (por ejemplo, con gravedad)
+    virtual void actualizar();
 
-    // Devuelve true si la bala ya salió por arriba y se puede borrar
+    // Devuelve true si la bala salió por cualquier borde y ya se puede borrar
     bool fueraDePantalla() const;
 };
 

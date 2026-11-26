@@ -39,7 +39,10 @@ private slots:
     void actualizar();
 
 private:
-    void disparar();   // crea una bala nueva saliendo de Goku
+    void disparar();   // crea una bala recta saliendo de Goku
+
+    // Registra una bala nueva: crea su dibujo, la pone en la escena y en la lista
+    void agregarProyectil(Proyectil *p, const QPixmap &sprite);
 
     Ui::MainWindow *ui;
     QGraphicsScene *scene;   // la escena: el "escenario" donde viven los objetos
