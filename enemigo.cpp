@@ -22,7 +22,6 @@ bool Enemigo::actualizar()
     return cambio;
 }
 
-// Movimiento base: pasos horizontales
 void Enemigo::moverse()
 {
     mover(vel, 0);
@@ -52,10 +51,14 @@ void Enemigo::revisarBorde(double maxX, double ancho)
         cambiarDireccion();
 }
 
-// Bala base: recta, hacia abajo
 Proyectil* Enemigo::crearBala(double x, double y) const
 {
     return new Proyectil(x, y, 0, 5);
+}
+
+void Enemigo::disparar(std::vector<Proyectil*> &salida, double x, double y) const
+{
+    salida.push_back(crearBala(x, y));
 }
 
 void Enemigo::aumentarDificultad()

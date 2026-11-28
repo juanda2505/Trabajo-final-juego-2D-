@@ -21,12 +21,24 @@ qt_add_executable(desafio3
     proyectil.cpp
     proyectilparabolico.h
     proyectilparabolico.cpp
+    proyectilrebote.h
+    proyectilrebote.cpp
     enemigo.h
     enemigo.cpp
-    proyectilrebote.cpp
-    proyectilrebote.h
-    enemigooscilante.cpp
     enemigooscilante.h
+    enemigooscilante.cpp
+    jefe.cpp
+    jefe.h
+)
+
+qt_add_resources(desafio3 "recursos"
+    PREFIX "/"
+    FILES
+        sprites/personaje_capitan.png
+        sprites/enemigo_barco.png
+        sprites/enemigo_oscilante.png
+        sprites/enemigo_jefe.png
+        sprites/fondo_mar_tierra.png
 )
 
 target_link_libraries(desafio3

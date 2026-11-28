@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QGraphicsRectItem>
 #include <QTimer>
 #include <QKeyEvent>
 #include <QPixmap>
@@ -14,6 +15,7 @@
 #include "proyectil.h"
 #include "enemigo.h"
 #include "enemigooscilante.h"
+#include "jefe.h"
 #include "entidadgrafica.h"
 
 QT_BEGIN_NAMESPACE
@@ -38,16 +40,23 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
 
 private slots:
-    void actualizar();   // se ejecuta cada 16 ms
+    void actualizar();
 
 private:
-    void disparar();                                          // bala de Goku
+    void disparar();
     void agregarProyectil(Proyectil *p, const QPixmap &sprite);
-    void agregarBalaEnemiga(Proyectil *p);                    // recibe la bala ya creada
+    void agregarBalaEnemiga(Proyectil *p, const QPixmap &sprite);
     void crearEnemigo(double x, double y);
     void crearEnemigoOscilante(double x, double y);
-    void eliminar(EntidadGrafica *g);                         // quita dibujo y lógica
-    void terminar(const QString &motivo);                     // fin de la partida
+    void crearJefe();
+    void eliminar(EntidadGrafica *g);
+    void sumarMuerte(Enemigo *e);
+    void terminar(const QString &motivo);
+
+    // Rayo Solar
+    void intentarRayo();     // tecla C: empieza a cargar si hay puntos suficientes
+    void actualizarRayo();   // avanza carga, espera y dibujo
+    void dispararRayo();     // daña a los enemigos de la columna del peleador
 
     Ui::MainWindow *ui;
     QGraphicsScene *scene;
@@ -57,20 +66,32 @@ private:
     Jugador *goku;
     EntidadGrafica *gokuGrafico;
 
-    std::vector<EntidadGrafica*> balas;             // balas de Goku
-    std::vector<EntidadGrafica*> balasEnemigas;     // balas de los enemigos
-    std::vector<EntidadGrafica*> enemigosGraficos;  // enemigos en pantalla
+    std::vector<EntidadGrafica*> balas;
+    std::vector<EntidadGrafica*> balasEnemigas;
+    std::vector<EntidadGrafica*> enemigosGraficos;
 
     QPixmap spriteBala;
     QPixmap spriteBalaEnemiga;
-    QPixmap framesEnemigo[2];      // cuadros de los enemigos normales
-    QPixmap framesOscilante[2];    // cuadros de los enemigos oscilantes (morados)
+    QPixmap spriteBalaJefe;
+    QPixmap framesEnemigo[2];
+    QPixmap framesOscilante[2];
+    QPixmap framesJefe[2];
 
     bool izquierda = false;
     bool derecha = false;
     bool juegoTerminado = false;
+    bool jefeCreado = false;
+    bool jefeDerrotado = false;
     int puntos = 0;
     int contadorSpawn = 0;
+    int ticksJefe = 0;
+
+    // Estado del Rayo Solar (1 s = 60 ticks, 8 s = 500 ticks)
+    bool cargandoRayo = false;
+    int cargaRayo = 0;
+    int enfriamientoRayo = 0;
+    int ticksVisualRayo = 0;
+    QGraphicsRectItem *visualRayo = nullptr;
 };
 
 #endif // MAINWINDOW_H

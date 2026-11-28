@@ -3,6 +3,7 @@
 
 #include "entidad.h"
 #include "proyectil.h"
+#include <vector>
 
 /*
  * ENEMIGO
@@ -11,16 +12,15 @@
  * Los métodos virtuales permiten que las clases hijas cambien su comportamiento.
  */
 class Enemigo : public Entidad {
-    int vel;               // píxeles por paso (negativo = izquierda)
+    int vel;               // píxeles por paso
     int cadencia;          // ticks entre pasos
-    int timer = 0;         // contador de ticks para el movimiento
-    int frame = 0;         // cuadro de animación actual: 0 o 1
+    int timer = 0;
+    int frame = 0;         // cuadro de animación: 0 o 1
     int cadenciaDisparo;   // ticks entre disparos
-    int timerDisparo = 0;  // contador de ticks para el disparo
+    int timerDisparo = 0;
 public:
-    // Lanza std::invalid_argument si alguna cadencia no es positiva
     Enemigo(double x, double y, int vida = 1, int vel = 12,
-            int cadencia = 15, int cadenciaDisparo = 120);
+            int cadencia = 8, int cadenciaDisparo = 120);
 
     // Avanza un tick. Devuelve true si cambió de cuadro
     bool actualizar();
@@ -34,11 +34,15 @@ public:
     // Si va hacia un borde y lo toca, cambia de dirección
     virtual void revisarBorde(double maxX, double ancho);
 
-    // Crea la bala que dispara el enemigo. Cada tipo dispara un proyectil distinto
+    // Crea la bala que dispara el enemigo
     virtual Proyectil* crearBala(double x, double y) const;
 
-    // Sirve para elegir qué animación usar (color)
+    // Dispara y añade las balas a 'salida'. Por defecto, una sola bala.
+    // El jefe la redefine para disparar en abanico.
+    virtual void disparar(std::vector<Proyectil*> &salida, double x, double y) const;
+
     virtual bool esOscilante() const { return false; }
+    virtual bool esJefe() const { return false; }
 
     // Dificultad: reduce cadencias, con mínimos para que siga siendo jugable
     void aumentarDificultad();

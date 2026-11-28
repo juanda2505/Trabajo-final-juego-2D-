@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>sprites/personaje_capitan.png</file>
+        <file>sprites/enemigo_barco.png</file>
+    </qresource>
+</RCC>
